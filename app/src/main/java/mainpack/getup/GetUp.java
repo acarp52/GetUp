@@ -12,6 +12,8 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.concurrent.TimeUnit;
+
 public class GetUp extends ActionBarActivity implements SensorEventListener{
     Button startBtn, stopBtn;
     TextView textViewTime;
@@ -28,10 +30,22 @@ public class GetUp extends ActionBarActivity implements SensorEventListener{
 
         acceleration = (TextView)findViewById(R.id.acceleration);
 
-        startBtn = (Button) findViewById(R.id.startBtn);
-        stopBtn = (Button) findViewById(R.id.stopBtn);
+        ///startBtn = (Button) findViewById(R.id.startBtn);
+        ///stopBtn = (Button) findViewById(R.id.stopBtn);
         textViewTime = (TextView) findViewById(R.id.textViewTime);
         textViewTime.setText("00:03:00");
+        new CountDownTimer(30000, 1000) {//CountDownTimer(edittext1.getText()+edittext2.getText()) also parse it to long
+
+            public void onTick(long millisUntilFinished) {
+                textViewTime.setText("seconds remaining: " + millisUntilFinished / 1000);
+                //here you can have your logic to set text to edittext
+            }
+
+            public void onFinish() {
+                textViewTime.setText("done!");
+            }
+        }
+                .start();
     }
 
     @Override
@@ -70,4 +84,6 @@ public class GetUp extends ActionBarActivity implements SensorEventListener{
 
 
     }
+
+
 }

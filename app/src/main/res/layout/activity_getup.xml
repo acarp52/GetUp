@@ -8,26 +8,11 @@
     <TextView android:id = "@+id/acceleration" android:text="testytest" android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <Button android:id = "@+id/startBtn"
-        android:text = "START"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/acceleration"
-        android:layout_marginBottom="186dp" />
-
-    <Button android:id = "@+id/stopBtn"
-        android:text = "STOP"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_alignTop="@+id/startBtn"
-        android:layout_toEndOf="@+id/startBtn"
-        android:layout_marginStart="31dp" />
-
     <TextView
         android:id="@+id/textViewTime"
         android:text="text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toStartOf="@+id/stopBtn" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>
