@@ -4,15 +4,17 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.CountDownTimer;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.TextView;
 
-
 public class GetUp extends ActionBarActivity implements SensorEventListener{
-
+    Button startBtn, stopBtn;
+    TextView textViewTime;
     Sensor accelerometer;
     SensorManager sm;
     TextView acceleration;
@@ -25,6 +27,11 @@ public class GetUp extends ActionBarActivity implements SensorEventListener{
         sm.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
         acceleration = (TextView)findViewById(R.id.acceleration);
+
+        startBtn = (Button) findViewById(R.id.startBtn);
+        stopBtn = (Button) findViewById(R.id.stopBtn);
+        textViewTime = (TextView) findViewById(R.id.textViewTime);
+        textViewTime.setText("00:03:00");
     }
 
     @Override
@@ -60,5 +67,7 @@ public class GetUp extends ActionBarActivity implements SensorEventListener{
         }
 
         return super.onOptionsItemSelected(item);
+
+
     }
 }
