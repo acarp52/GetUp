@@ -1,6 +1,7 @@
 package mainpack.getup;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -13,6 +14,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.SeekBar;
@@ -38,11 +40,6 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
     private TextView acceleration;
     private int i = 0;
     private int n = 0;
-    //protected Vibrator vib;
-
-    private static int TIME_MAX = 30000; // Need to map to UI element
-    private final int TIME_INTERVAL = 1000;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +86,7 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
 
     private void resetChrono(){
         chronometer.setBase(SystemClock.elapsedRealtime());
+        chronometer.setTextColor(Color.parseColor("white"));
         chronometer.start();
     }
 
@@ -156,11 +154,16 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
 
         debug.setText(count.toString());
 
-        if( count == sitTimeSeek.getProgress()){
+        chronometer.setTextColor(Color.parseColor("white"));
+
+        if( count >= sitTimeSeek.getProgress()){
             debug.setText("MATCH!!!!!!!");
+            chronometer.setTextColor(Color.parseColor("red"));
             Vibrator vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             vib.vibrate(5000);
         }
+
+
     }
 
     @Override
