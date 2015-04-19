@@ -1,5 +1,6 @@
 package mainpack.getup;
 
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -7,6 +8,7 @@ import android.hardware.SensorManager;
 import android.os.CountDownTimer;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,6 +34,7 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
     private Sensor accelerometer;
     private SensorManager sm;
     private TextView acceleration;
+    //protected Vibrator vib;
 
     private static int TIME_MAX = 30000; // Need to map to UI element
     private final int TIME_INTERVAL = 1000;
@@ -44,6 +47,7 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
         sm = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sm.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        //vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         acceleration = (TextView) findViewById(R.id.acceleration);
         chronometer = (Chronometer) findViewById(R.id.chronometer);
@@ -68,7 +72,6 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
                 sitTimeDisplay.setText("Sit time:" + progress);
-
 
             }
         });
@@ -108,7 +111,12 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
 
     public void onClick(View v) {
         resetChrono();
+        Vibrator vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        vib.vibrate(500);
+    }
 
+    public void vib(Vibrator v) {
+        v.vibrate(500);
     }
 
     @Override
