@@ -35,6 +35,7 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
     private SensorManager sm;
     private TextView acceleration;
     private int i = 0;
+    private int n = 0;
     //protected Vibrator vib;
 
     private static int TIME_MAX = 30000; // Need to map to UI element
@@ -106,13 +107,20 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
     @Override
     public void onSensorChanged(SensorEvent event){
         int k = 0;
-        if (i > 50){
+        if(sitTimeSeek.getProgress() / 12 == n/5){
             acceleration.setText("YOU FUCKING DID IT");
+            resetChrono();
+            Vibrator vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            vib.vibrate(500);
+            n = 0;
+            n = 1;
+            n = 0;
         }
         else {
-            acceleration.setText("X: " + event.values[0] +
-                    "\nY: " + event.values[1] +
-                    "\nZ: " + event.values[2]);
+            acceleration.setText("sec:  "+n/5+ "\ngoal: "+sitTimeSeek.getProgress()/12);
+            //acceleration.setText("X: " + event.values[0] +
+            //        "\nY: " + event.values[1] +
+            //        "\nZ: " + event.values[2]);
         }
         if(event.values[0]<1 && event.values[0] > -1){
             if(event.values[1]<1 && event.values[1] > -1){
@@ -129,7 +137,7 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
             }
         }
         if (k != 1){
-            i++;
+            n++;
         }
 
 
