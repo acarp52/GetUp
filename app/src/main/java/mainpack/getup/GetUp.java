@@ -8,36 +8,78 @@ import android.os.CountDownTimer;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Chronometer;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.os.SystemClock;
 
+import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
-public class GetUp extends ActionBarActivity implements SensorEventListener{
-    Button startBtn, stopBtn;
-    TextView textViewTime;
-    Sensor accelerometer;
-    SensorManager sm;
-    TextView acceleration;
+public class GetUp extends ActionBarActivity implements SensorEventListener, OnClickListener{
+    private Button resetBtn;
+    private TextView textViewTime;
+
+    private Chronometer chronometer;
+    private SeekBar sitTimeSeek;
+    private TextView sitTimeDisplay;
+
+    private Sensor accelerometer;
+    private SensorManager sm;
+    private TextView acceleration;
+
+    private static int TIME_MAX = 30000; // Need to map to UI element
+    private final int TIME_INTERVAL = 1000;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_getup);
-        sm = (SensorManager)getSystemService(SENSOR_SERVICE);
+        sm = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sm.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
-        acceleration = (TextView)findViewById(R.id.acceleration);
+        acceleration = (TextView) findViewById(R.id.acceleration);
+        chronometer = (Chronometer) findViewById(R.id.chronometer);
+        chronometer.start();
+        ((Button) findViewById(R.id.resetBtn)).setOnClickListener(this);
 
-        ///startBtn = (Button) findViewById(R.id.startBtn);
-        ///stopBtn = (Button) findViewById(R.id.stopBtn);
-        textViewTime = (TextView) findViewById(R.id.textViewTime);
-        textViewTime.setText("00:03:00");
-        new CountDownTimer(30000, 1000) {//CountDownTimer(edittext1.getText()+edittext2.getText()) also parse it to long
+        sitTimeDisplay = (TextView) findViewById(R.id.sitTimeDisplay);
+        //sitTimeDisplay.setText("Sit time:" + sitTimeSeek.getProgress());
+        sitTimeSeek = (SeekBar) findViewById(R.id.sitTime);
+        sitTimeSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            int period = 0;
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                sitTimeDisplay.setText("Sit time:" + progress);
+
+
+            }
+        });
+    }
+
+        /*
+        textViewTime = resetTimer(TIME_MAX);
+        new CountDownTimer(TIME_MAX, TIME_INTERVAL) {//CountDownTimer(edittext1.getText()+edittext2.getText()) also parse it to long
 
             public void onTick(long millisUntilFinished) {
-                textViewTime.setText("seconds remaining: " + millisUntilFinished / 1000);
+                textViewTime.setText("seconds remaining: " + millisUntilFinished / TIME_INTERVAL    );
                 //here you can have your logic to set text to edittext
             }
 
@@ -46,6 +88,27 @@ public class GetUp extends ActionBarActivity implements SensorEventListener{
             }
         }
                 .start();
+
+        ///resetBtn = (Button) findViewById(R.id.resetBtn);
+        ///stopBtn = (Button) findViewById(R.id.stopBtn);
+
+    }
+
+    private TextView resetTimer(int max){
+        TextView timer;
+        timer = (TextView) findViewById(R.id.textViewTime);
+        return timer;
+    }
+    */
+
+    private void resetChrono(){
+        chronometer.setBase(SystemClock.elapsedRealtime());
+        chronometer.start();
+    }
+
+    public void onClick(View v) {
+        resetChrono();
+
     }
 
     @Override
