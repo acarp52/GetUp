@@ -1,8 +1,7 @@
 package mainpack.getup;
 
-import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.content.Context;
+import android.graphics.Color;
 import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -16,15 +15,16 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.os.SystemClock;
-import java.util.Random;
 
-import java.util.ArrayList;
+import java.lang.reflect.Array;
+import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
@@ -34,20 +34,12 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
 
     private Chronometer chronometer;
     private SeekBar sitTimeSeek;
-    private TextView sitTimeDisplay;
+    private TextView sitTimeDisplay, debug;
 
     private Sensor accelerometer;
     private SensorManager sm;
     private TextView acceleration;
-    private int i = 0;
     private int n = 0;
-
-
-    //protected Vibrator vib;
-
-    private static int TIME_MAX = 30000; // Need to map to UI element
-    private final int TIME_INTERVAL = 1000;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,15 +52,16 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
 
         acceleration = (TextView) findViewById(R.id.acceleration);
         chronometer = (Chronometer) findViewById(R.id.chronometer);
-        chronometer.setText("00:00:00");
+        chronometer.setFormat("00:%s");
         chronometer.start();
         ((Button) findViewById(R.id.resetBtn)).setOnClickListener(this);
 
         sitTimeDisplay = (TextView) findViewById(R.id.sitTimeDisplay);
+        debug = (TextView) findViewById(R.id.debug);
         sitTimeSeek = (SeekBar) findViewById(R.id.sitTime);
-        sitTimeSeek.setProgress(5400);
-        sitTimeDisplay.setText("Sit time: + sitTimeSeek.get");
-        sitTimeDisplay.setText("Sit time: " + (sitTimeSeek.getProgress()/3600) + " hours "+ (sitTimeSeek.getProgress()/60 - (sitTimeSeek.getProgress()/3600)*60) + " minutes");
+        sitTimeSeek.setProgress(90);
+        //sitTimeDisplay.setText("Sit time: + sitTimeSeek.get");
+        sitTimeDisplay.setText("Sit time: " + (sitTimeSeek.getProgress()/60) + " hours "+ (sitTimeSeek.getProgress() - (sitTimeSeek.getProgress()/60)*60) + " minutes");
         sitTimeSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             int period = 0;
 
@@ -83,7 +76,8 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                sitTimeDisplay.setText("Sit time: " + (progress/3600) + " hours "+ (sitTimeSeek.getProgress()/60 - (sitTimeSeek.getProgress()/3600)*60) + " minutes");
+                sitTimeDisplay.setText("Sit time: " + (progress/60) + " hours "+ (progress - (progress/60)*60) + " minutes");
+
 
             }
         });
@@ -93,51 +87,14 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
 
     private void resetChrono(){
         chronometer.setBase(SystemClock.elapsedRealtime());
+        chronometer.setTextColor(Color.parseColor("white"));
         chronometer.start();
-        genDialog();
-    }
-
-    public ArrayList<String> getExersizes(){
-        ArrayList<String> exersizes = new ArrayList();
-        exersizes.add("squats");
-        exersizes.add("jumping jacks");
-        exersizes.add("burpie");
-        return exersizes;
-    }
-
-    public String genExersize(ArrayList<String> exersizes){
-        Random r = new Random();
-        int randomInt = r.nextInt(3);
-        return exersizes.get(randomInt);
-    }
-
-    public void genDialog(){
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle("Title");
-        alertDialog.setMessage(genExersize(getExersizes()));
-        alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // TODO Add your code for the button here.
-            }
-        });
-// Set the Icon for the Dialog
-        //alertDialog.setIcon(R.drawable.icon);
-        alertDialog.show();
     }
 
     public void onClick(View v) {
         resetChrono();
         Vibrator vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         vib.vibrate(500);
-
-
-
-
-    }
-
-
-    public void vib(Vibrator v) {
-        v.vibrate(500);
     }
 
     @Override
@@ -151,14 +108,12 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
         if(sitTimeSeek.getProgress() / 12 == n/5){
             acceleration.setText("YOU FUCKING DID IT");
             resetChrono();
-            Vibrator vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            vib.vibrate(500);
-            n = 0;
-            n = 1;
+            //Vibrator vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            //vib.vibrate(500);
             n = 0;
         }
         else {
-            acceleration.setText("sec:  "+n/5+ "\ngoal: "+sitTimeSeek.getProgress()/12);
+            acceleration.setText("sec:  "+n/5+ "\ngoal: "+ (sitTimeSeek.getProgress()*60)/12 );
             //acceleration.setText("X: " + event.values[0] +
             //        "\nY: " + event.values[1] +
             //        "\nZ: " + event.values[2]);
@@ -182,15 +137,27 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
         }
 
 
-        System.out.println(i);
+        //System.out.println(i);
         //System.out.println(event.values[0]+" : "+event.values[1]+" : "+event.values[2]);
 
-        if(chronometer.getBase() == sitTimeSeek.getProgress()){
-            System.out.println("!\n!\n!\n!\nSeekBar Equal!\n!\n!\n!\n!\n!\n");
+        String countStr = chronometer.getText().toString();
+        Integer count = 0;
+        String[] countLst = countStr.split(":");
+        count += Integer.parseInt(countLst[0])*60;
+        count += Integer.parseInt(countLst[1]);
+        //count += Integer.parseInt(countLst[2]);
+
+        debug.setText(count.toString());
+
+        chronometer.setTextColor(Color.parseColor("white"));
+
+        if( count >= sitTimeSeek.getProgress()){
+            debug.setText("MATCH!!!!!!!");
+            chronometer.setTextColor(Color.parseColor("red"));
+            Vibrator vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            vib.vibrate(5000);
         }
-        //if(chronometer.getBase() == Integer.parseInt(sitTimeDisplay.getText().toString())){
-        //    System.out.println("Display Equal!");
-        //}
+
 
     }
 
