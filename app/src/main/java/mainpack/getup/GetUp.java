@@ -34,6 +34,7 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
     private Sensor accelerometer;
     private SensorManager sm;
     private TextView acceleration;
+    private int i = 0;
     //protected Vibrator vib;
 
     private static int TIME_MAX = 30000; // Need to map to UI element
@@ -126,27 +127,36 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
 
     @Override
     public void onSensorChanged(SensorEvent event){
-        acceleration.setText("X: "+event.values[0]+
-                "\nY: "+event.values[1]+
-                "\nZ: "+event.values[2]);
+        int k = 0;
+        if (i > 50){
+            acceleration.setText("YOU FUCKING DID IT");
+        }
+        else {
+            acceleration.setText("X: " + event.values[0] +
+                    "\nY: " + event.values[1] +
+                    "\nZ: " + event.values[2]);
+        }
         if(event.values[0]<1 && event.values[0] > -1){
             if(event.values[1]<1 && event.values[1] > -1){
                 if((event.values[2]<11 && event.values[2] > 9) || event.values[2] >-11 && event.values[2] < -9){
-                    System.out.println("resting");
+                    k = 1;
                 }
             }
         }
         if(event.values[0]<8 && event.values[0] > 6.5){
             if(event.values[1]<4 && event.values[1] > 2.5){
                 if((event.values[2]<-4 && event.values[2] > -5.5)){
-                    System.out.println("resting");
+                    k = 1;
                 }
             }
         }
+        if (k != 1){
+            i++;
+        }
 
 
-
-        System.out.println(event.values[0]+" : "+event.values[1]+" : "+event.values[2]);
+        System.out.println(i);
+        //System.out.println(event.values[0]+" : "+event.values[1]+" : "+event.values[2]);
 
     }
 
