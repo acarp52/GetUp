@@ -1,5 +1,6 @@
 package mainpack.getup;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.content.DialogInterface;
@@ -40,6 +41,7 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
     private SensorManager sm;
     private TextView acceleration;
     private int n = 0;
+    private int i = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,7 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
         chronometer = (Chronometer) findViewById(R.id.chronometer);
         chronometer.setFormat("00:%s");
         chronometer.start();
-        ((Button) findViewById(R.id.resetBtn)).setOnClickListener(this);
+        //((Button) findViewById(R.id.resetBtn)).setOnClickListener(this);
 
         sitTimeDisplay = (TextView) findViewById(R.id.sitTimeDisplay);
         debug = (TextView) findViewById(R.id.debug);
@@ -91,10 +93,27 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
         chronometer.start();
     }
 
+    public void alert() {
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle("GET UP AND MOVE");
+        alertDialog.setMessage("You have been sitting for "+sitTimeSeek.getProgress()+" minuts," +
+                "you should get up and walk arround for the next couple of minuits.");
+        alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                resetChrono();
+            }
+        });
+        alertDialog.show();
+    }
+// Set the Icon for the Dialog
+
+
+
     public void onClick(View v) {
         resetChrono();
         Vibrator vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         vib.vibrate(500);
+        alert();
     }
 
     @Override
@@ -105,7 +124,8 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
     @Override
     public void onSensorChanged(SensorEvent event){
         int k = 0;
-        if(sitTimeSeek.getProgress() / 12 == n/5){
+        System.out.println(sitTimeSeek.getProgress() / 12);
+        if(sitTimeSeek.getProgress() *60 / 12 == n/5){
             acceleration.setText("YOU FUCKING DID IT");
             resetChrono();
             //Vibrator vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -149,13 +169,17 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
 
         debug.setText(count.toString());
 
-        chronometer.setTextColor(Color.parseColor("white"));
-
         if( count >= sitTimeSeek.getProgress()){
-            debug.setText("MATCH!!!!!!!");
+            debug.setText(""+sitTimeSeek.getProgress()% 60);
             chronometer.setTextColor(Color.parseColor("red"));
             Vibrator vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            vib.vibrate(5000);
+
+            if(i == 0 ){
+                i = 1;
+                alert();
+                vib.vibrate(5000);
+
+            }
         }
 
 
