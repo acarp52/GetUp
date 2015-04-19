@@ -51,12 +51,15 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
 
         acceleration = (TextView) findViewById(R.id.acceleration);
         chronometer = (Chronometer) findViewById(R.id.chronometer);
+        chronometer.setText("00:00:00");
         chronometer.start();
         ((Button) findViewById(R.id.resetBtn)).setOnClickListener(this);
 
         sitTimeDisplay = (TextView) findViewById(R.id.sitTimeDisplay);
-        //sitTimeDisplay.setText("Sit time:" + sitTimeSeek.getProgress());
         sitTimeSeek = (SeekBar) findViewById(R.id.sitTime);
+        sitTimeSeek.setProgress(5400);
+        sitTimeDisplay.setText("Sit time: + sitTimeSeek.get");
+        sitTimeDisplay.setText("Sit time: " + (sitTimeSeek.getProgress()/3600) + " hours "+ (sitTimeSeek.getProgress()/60 - (sitTimeSeek.getProgress()/3600)*60) + " minutes");
         sitTimeSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             int period = 0;
 
@@ -71,38 +74,13 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                sitTimeDisplay.setText("Sit time:" + progress);
+                sitTimeDisplay.setText("Sit time: " + (progress/3600) + " hours "+ (sitTimeSeek.getProgress()/60 - (sitTimeSeek.getProgress()/3600)*60) + " minutes");
 
             }
         });
-    }
-
-        /*
-        textViewTime = resetTimer(TIME_MAX);
-        new CountDownTimer(TIME_MAX, TIME_INTERVAL) {//CountDownTimer(edittext1.getText()+edittext2.getText()) also parse it to long
-
-            public void onTick(long millisUntilFinished) {
-                textViewTime.setText("seconds remaining: " + millisUntilFinished / TIME_INTERVAL    );
-                //here you can have your logic to set text to edittext
-            }
-
-            public void onFinish() {
-                textViewTime.setText("done!");
-            }
-        }
-                .start();
-
-        ///resetBtn = (Button) findViewById(R.id.resetBtn);
-        ///stopBtn = (Button) findViewById(R.id.stopBtn);
 
     }
 
-    private TextView resetTimer(int max){
-        TextView timer;
-        timer = (TextView) findViewById(R.id.textViewTime);
-        return timer;
-    }
-    */
 
     private void resetChrono(){
         chronometer.setBase(SystemClock.elapsedRealtime());
@@ -130,6 +108,13 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
                 "\nY: "+event.values[1]+
                 "\nZ: "+event.values[2]);
 
+        if(chronometer.getBase() == sitTimeSeek.getProgress()){
+            System.out.println("!\n!\n!\n!\nSeekBar Equal!\n!\n!\n!\n!\n!\n");
+        }
+        //if(chronometer.getBase() == Integer.parseInt(sitTimeDisplay.getText().toString())){
+        //    System.out.println("Display Equal!");
+        //}
+
     }
 
     @Override
@@ -155,6 +140,7 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
 
 
     }
+
 
 
 }
