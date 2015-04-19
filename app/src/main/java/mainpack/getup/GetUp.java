@@ -20,6 +20,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.os.SystemClock;
 
+import java.lang.reflect.Array;
+import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
@@ -29,7 +31,7 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
 
     private Chronometer chronometer;
     private SeekBar sitTimeSeek;
-    private TextView sitTimeDisplay;
+    private TextView sitTimeDisplay, debug;
 
     private Sensor accelerometer;
     private SensorManager sm;
@@ -52,15 +54,16 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
 
         acceleration = (TextView) findViewById(R.id.acceleration);
         chronometer = (Chronometer) findViewById(R.id.chronometer);
-        chronometer.setText("00:00:00");
+        chronometer.setFormat("00:%s");
         chronometer.start();
         ((Button) findViewById(R.id.resetBtn)).setOnClickListener(this);
 
         sitTimeDisplay = (TextView) findViewById(R.id.sitTimeDisplay);
+        debug = (TextView) findViewById(R.id.debug);
         sitTimeSeek = (SeekBar) findViewById(R.id.sitTime);
-        sitTimeSeek.setProgress(5400);
-        sitTimeDisplay.setText("Sit time: + sitTimeSeek.get");
-        sitTimeDisplay.setText("Sit time: " + (sitTimeSeek.getProgress()/3600) + " hours "+ (sitTimeSeek.getProgress()/60 - (sitTimeSeek.getProgress()/3600)*60) + " minutes");
+        sitTimeSeek.setProgress(90);
+        //sitTimeDisplay.setText("Sit time: + sitTimeSeek.get");
+        sitTimeDisplay.setText("Sit time: " + (sitTimeSeek.getProgress()/60) + " hours "+ (sitTimeSeek.getProgress() - (sitTimeSeek.getProgress()/60)*60) + " minutes");
         sitTimeSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             int period = 0;
 
@@ -75,7 +78,7 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                sitTimeDisplay.setText("Sit time: " + (progress/3600) + " hours "+ (sitTimeSeek.getProgress()/60 - (sitTimeSeek.getProgress()/3600)*60) + " minutes");
+                sitTimeDisplay.setText("Sit time: " + (progress/60) + " hours "+ (progress - (progress/60)*60) + " minutes");
 
             }
         });
@@ -133,16 +136,23 @@ public class GetUp extends ActionBarActivity implements SensorEventListener, OnC
         }
 
 
-        System.out.println(i);
+        //System.out.println(i);
         //System.out.println(event.values[0]+" : "+event.values[1]+" : "+event.values[2]);
 
-        if(chronometer.getBase() == sitTimeSeek.getProgress()){
-            System.out.println("!\n!\n!\n!\nSeekBar Equal!\n!\n!\n!\n!\n!\n");
-        }
-        //if(chronometer.getBase() == Integer.parseInt(sitTimeDisplay.getText().toString())){
-        //    System.out.println("Display Equal!");
-        //}
+        String countStr = chronometer.getText().toString();
+        Integer count = 0;
+        String[] countLst = countStr.split(":");
+        count += Integer.parseInt(countLst[0])*60;
+        count += Integer.parseInt(countLst[1]);
+        //count += Integer.parseInt(countLst[2]);
 
+        debug.setText(count.toString());
+
+        if( count == sitTimeSeek.getProgress()){
+            debug.setText("MATCH!!!!!!!");
+            Vibrator vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            vib.vibrate(5000);
+        }
     }
 
     @Override
